@@ -1,18 +1,28 @@
 from fastapi import FastAPI, HTTPException
-from requests import get
 from model import BerryStatistics
 from statistics import mean, median, pvariance
 from dotenv import load_dotenv
 from os import getenv
+from json import loads
+import requests
+import redis
 load_dotenv()
 
 app = FastAPI(title="Poke-berries statistics API")
 
 pokeapi = getenv("POKEAPI")
+cache_key_stats = getenv("CACHE_KEY_STATS")
+cache_key_names = getenv("CACHE_KEY_NAMES")
+cache_ttl = int(getenv("CACHE_TTL"))
+
+redis_cache = redis.Redis(host="localhost",
+                          port=6379,
+                          db=0,
+                          decode_responses=True)
 
 
 def get_all_berries() -> list:
-    response = get(f"{pokeapi}?limit=100")
+    response = requests.get(f"{pokeapi}?limit=100")
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code,
                             detail="Can't get berries")
@@ -20,7 +30,7 @@ def get_all_berries() -> list:
 
 
 def get_berry_by_url(url: str):
-    response = get(url)
+    response = requests.get(url)
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code,
                             detail=f"Can't get berry number {url.split('/')[-1]}, {url}")
@@ -55,3 +65,13 @@ def calculate_statistics() -> BerryStatistics:
         frequency_growth_time=frequency_gt
     )
 
+
+@app.get("/allBerryStats", response_model=BerryStatistics)
+def get_all_berry_stats():
+    cached = redis_cache.get(cache_key_stats)
+    if cached:
+        return BerryStatistics(**loads(cached))
+    else:
+        stats = calculate_statistics()
+        redis_cache.setex(cache_key_stats, cache_ttl, stats.json())
+        return stats
