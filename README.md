@@ -60,7 +60,7 @@ FastAPI for getting statistics on all berries from PokeAPI with Redis caching an
 **GET** ```/allBerryStats``` \
 returns statistics for all berries
 
-Can be reached for example by curl:
+Can be reached, for example, by curl:
 ```curl
 curl http://127.0.0.1:8000/allBerryStats
 ```
@@ -77,6 +77,12 @@ Example response:
   "frequency_growth_time": {"3": 1, "7": 1}
 }
 ```
+
+ or with -i to see additional info
+```curl
+curl -i http://127.0.0.1:8000/allBerryStats
+```
+
 Data is cached in Redis for 1 hour.
 
 ## Testing
