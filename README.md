@@ -52,7 +52,7 @@ FastAPI for getting statistics on all berries from PokeAPI with Redis caching an
 2. Copy example.env to .env and edit it as in the steps 4 and 5 above.
 3. Build and start Docker container with the application
     ```bash
-    docker-compose up --build
+    docker-compose up --build api redis
     ```
 
 ## Endpoints
@@ -96,6 +96,11 @@ To run all the test with detailed output
 ```bash
 pytest -v
 ```
+To run tests in docker
+```bash
+docker-compose run --rm test
+```
+
 ### Mockes and isolation
 * Tests are completely isolated from web and real Redis server
 * Used FakeRedis to emulate cache 
