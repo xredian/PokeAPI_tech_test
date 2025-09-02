@@ -16,3 +16,17 @@ services:
     container_name: poke-redis
     ports:
       - "6379:6379"
+
+  test:
+    build: .
+    container_name: poke-tests
+    command: pytest -v --disable-warnings
+    volumes:
+      - .:/app
+    working_dir: /app
+    environment:
+      - PYTHONPATH=/app
+    env_file:
+      - .env
+    depends_on:
+      - redis
