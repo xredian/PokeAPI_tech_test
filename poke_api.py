@@ -1,11 +1,14 @@
-from fastapi import FastAPI, HTTPException
-from model import BerryStatistics
-from statistics import mean, median, pvariance
-from dotenv import load_dotenv
-from os import getenv
 from json import loads
-import requests
+from os import getenv
+from statistics import mean, median, pvariance
+
 import redis
+import requests
+from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException
+
+from models.model import BerryStatistics
+
 load_dotenv()
 
 app = FastAPI(title="Poke-berries statistics API")
