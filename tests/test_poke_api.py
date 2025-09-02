@@ -1,9 +1,11 @@
+from unittest.mock import patch
+
 import pytest
 from fastapi.testclient import TestClient
-from poke_api import app, calculate_statistics, get_all_berries, cache_key_stats
-from unittest.mock import patch
-import poke_api
 
+import poke_api
+from poke_api import (app, cache_key_stats, calculate_statistics,
+                      get_all_berries)
 
 client = TestClient(app)
 
