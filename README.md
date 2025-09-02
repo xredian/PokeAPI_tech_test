@@ -14,28 +14,31 @@ FastAPI for getting statistics on all berries from PokeAPI with Redis caching an
     ```bash
     python -m venv venv
     source venv/bin/activate/    # Linux/MacOs
-    venv\Scripts\activate    # Windows
+    venv\Scripts\activate        # Windows
     ```
 3. Install dependencies
     ```bash
     pip install -r requirements.txt
     ```
-4. Create .env file with environment variables as in the example below:
+4. Copy example.env to .env:
     ```bash
-    POKEAPI = "https://pokeapi.co/api/v2/berry"    # DO NOT CHANGE - it is url to access external API
+    cp example.env .env
+    ```
+5. Edit the following variables in .env file
+    ```bash
     CACHE_KEY_STATS = "your_key_name"
     CACHE_KEY_NAMES = "another_key_name"
-    CACHE_TTL = "360"   # time for caching data in Redis, 360 = 1 hour, can be changed
+    CACHE_TTL = "360"                              # time for caching data in Redis, 360 = 1 hour, can be changed
     REDIS_HOST = "localhost"
     REDIS_PORT = "6379"
     REDIS_DB = "0"
     ```
-5. Run Redis
+6. Run Redis
     ```bash
     redis-server
     ```
 
-6. Run the project
+7. Run the project
     ```bash
     uvicorn poke_api:app --reload
     ```
@@ -46,7 +49,7 @@ FastAPI for getting statistics on all berries from PokeAPI with Redis caching an
 
 ### In Docker
 1. Clone the project as in the 1st step above
-2. Create .env file with environment variables as in the step 4 above.
+2. Copy example.env to .env and edit it as in the steps 4 and 5 above.
 3. Build and start Docker container with the application
     ```bash
     docker-compose up --build
@@ -94,14 +97,19 @@ pytest -v
 
 ## Project structure
 ```bash
-poke_api.py    # main API code
+poke_api.py               # main API code
 models/
-  |-- model.py    # pydantic response model
+  |-- model.py            # pydantic response model
 tests/
   |-- test_poke_api.py    # pytest tests
-README.md    # instructions and description
-requirements.txt    # dependencies
-.env    # environment variables
+README.md                 # instructions and description
+requirements.txt          # dependencies
+docker-compose.yml
+Dockerfile
+example.env               # example of .env file
+.env                      # environment variables
+.dockerignore
+.gitignore
 ```
 
 ## Useful links
