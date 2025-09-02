@@ -17,10 +17,13 @@ pokeapi = getenv("POKEAPI")
 cache_key_stats = getenv("CACHE_KEY_STATS")
 cache_key_names = getenv("CACHE_KEY_NAMES")
 cache_ttl = int(getenv("CACHE_TTL"))
+redis_port = int(getenv("REDIS_PORT"))
+redis_host = getenv("REDIS_HOST")
+redis_db = int(getenv("REDIS_DB"))
 
-redis_cache = redis.Redis(host="localhost",
-                          port=6379,
-                          db=0,
+redis_cache = redis.Redis(host=redis_host,
+                          port=redis_port,
+                          db=redis_db,
                           decode_responses=True)
 
 
@@ -76,5 +79,5 @@ def get_all_berry_stats():
         return BerryStatistics(**loads(cached))
     else:
         stats = calculate_statistics()
-        redis_cache.setex(cache_key_stats, cache_ttl, stats.json())
+        redis_cache.setex(cache_key_stats, cache_ttl, stats.model_dump_json())
         return stats
