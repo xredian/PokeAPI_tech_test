@@ -18,7 +18,7 @@ FastAPI for getting statistics on all berries from PokeAPI with Redis caching an
     ```
 3. Install dependencies
     ```bash
-    pip install -r requirements.txt
+    pip install -r docs/requirements.txt
     ```
 4. Copy example.env to .env:
     ```bash
@@ -40,7 +40,7 @@ FastAPI for getting statistics on all berries from PokeAPI with Redis caching an
 
 7. Run the project
     ```bash
-    uvicorn poke_api:app --reload
+    python main.py
     ```
    * By default, FastAPI will be available at http://127.0.0.1:8000
    * OpenAPI documentation is available:
@@ -108,19 +108,32 @@ docker-compose run --rm test
 
 ## Project structure
 ```bash
-poke_api.py               # main API code
-models/
-  |-- model.py            # pydantic response model
-tests/
-  |-- test_poke_api.py    # pytest tests
-README.md                 # instructions and description
-requirements.txt          # dependencies
-docker-compose.yml
-Dockerfile
-example.env               # example of .env file
-.env                      # environment variables
-.dockerignore
-.gitignore
+├──/app
+│  ├──/api
+│  │  ├──/endpoints   
+│  │  ├──__init__.py
+│  │  └── api.py               # main API code
+│  ├──/core
+│  │  └── config.py            # configuration variables
+│  ├──/crud
+│  ├──/models
+│  │  └── berry_statistics.py  # pydantic response model
+│  ├──/tests
+│  │  ├──__init__.py
+│  │  └── test_berries.py      # pytest tests
+│  ├── __init__.py
+│  └── main.py                 # initialisation of the app
+├──/docs
+│  └── requirements.txt        # dependencies
+├── .dockerignore 
+├── .env                       # environment variables 
+├── .gitignore 
+├── docker-compose.yml 
+├── Dockerfile
+├── example.env                 # example of .env file 
+├── LICENSE
+├── main.py                     # runs the application
+└── README.md                   # instructions and description
 ```
 
 ## Useful links
