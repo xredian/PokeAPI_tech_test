@@ -1,34 +1,23 @@
 from json import loads
-from os import getenv
 from statistics import mean, median, pvariance
 
 import redis
 import requests
-from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
+from fastapi import APIRouter, HTTPException
 
-from models.model import BerryStatistics
+from app.models.berry_statistics import BerryStatistics
+from app.core.config import config
 
-load_dotenv()
+router = APIRouter()
 
-app = FastAPI(title="Poke-berries statistics API")
-
-pokeapi = getenv("POKEAPI")
-cache_key_stats = getenv("CACHE_KEY_STATS")
-cache_key_names = getenv("CACHE_KEY_NAMES")
-cache_ttl = int(getenv("CACHE_TTL"))
-redis_port = int(getenv("REDIS_PORT"))
-redis_host = getenv("REDIS_HOST")
-redis_db = int(getenv("REDIS_DB"))
-
-redis_cache = redis.Redis(host=redis_host,
-                          port=redis_port,
-                          db=redis_db,
+redis_cache = redis.Redis(host=config.redis_host,
+                          port=config.redis_port,
+                          db=config.redis_db,
                           decode_responses=True)
 
 
 def get_all_berries() -> list:
-    response = requests.get(f"{pokeapi}?limit=100")
+    response = requests.get(f"{config.pokeapi}?limit=100")
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code,
                             detail="Can't get berries")
@@ -72,12 +61,13 @@ def calculate_statistics() -> BerryStatistics:
     )
 
 
-@app.get("/allBerryStats", response_model=BerryStatistics)
+@router.get("/allBerryStats", response_model=BerryStatistics)
 def get_all_berry_stats():
-    cached = redis_cache.get(cache_key_stats)
+    cached = redis_cache.get(config.cache_key_stats)
     if cached:
         return BerryStatistics(**loads(cached))
     else:
         stats = calculate_statistics()
-        redis_cache.setex(cache_key_stats, cache_ttl, stats.model_dump_json())
+        redis_cache.setex(config.cache_key_stats, config.cache_ttl,
+                          stats.model_dump_json())
         return stats
